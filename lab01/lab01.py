@@ -22,7 +22,13 @@ def captured_output():
 
 # implement this function
 def is_perfect(n):
-    pass
+    divisorSum = 0
+    for num in range(1, n):
+        if n % num == 0:
+            divisorSum += num
+        else:
+            continue
+    return n == divisorSum
 
 # (3 points)
 def test1():
