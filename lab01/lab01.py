@@ -67,7 +67,15 @@ def test2():
 # EXERCISE 3
 #################################################################################
 def integer_right_triangles(p):
-    pass
+    combos = []
+    for a in range(1, p): # loop through possible a values
+        for b in range(a, p-a): # loop through possible b values for each a
+            c = p - (a + b) # set c value equal to remaining amount
+            if (a ** 2) + (b ** 2) == (c ** 2):
+                combos.append((a, b, c))
+            elif (a ** 2) + (b ** 2) > (c ** 2): # to limit the number of triangles tested
+                break
+    return len(combos)
 
 def test3():
     tc = unittest.TestCase()
@@ -163,7 +171,7 @@ def main():
     test1()
     test2()
     test3()
-    test4()
+    # test4()
 
 if __name__ == '__main__':
     main()
