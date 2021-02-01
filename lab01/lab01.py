@@ -47,13 +47,9 @@ def test1():
 # implement this function
 def multiples_of_3_and_5(n):
     sum = 0
-    counter = 3
-    while counter < n:
-        if (counter % 3) == 0 or (counter % 5) == 0:
-            sum += counter
-            counter += 1
-        else:
-            counter += 1
+    for i in range(1, n):
+        if (i % 3) == 0 or (i % 5) == 0:
+            sum += i
     return sum
 
 # (3 points)
