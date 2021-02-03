@@ -85,7 +85,39 @@ def test3():
 
 # implement this function
 def gen_pattern(chars):
-    pass
+    # center line
+    reverse_chars = chars[len(chars):0:-1]
+    final = reverse_chars + chars
+    final = '.'.join(final)
+    
+    # reset reverse char
+    reverse_chars = chars[len(chars)::-1]
+
+    # width of each line
+    line_width = len(final)
+    
+    # store lines
+    lines = []
+
+    # top half
+    # go from small to large
+    for i in range(1, len(reverse_chars)):
+        line = reverse_chars[0:i]  
+        line = line[::-1]
+        line = reverse_chars[0:i-1] + line
+        line = '.'.join(line)
+        line = line.center(line_width, '.')
+        print(line)
+        lines.append(line)
+    
+    # print center line
+    print(final)
+
+    # bottom half
+    # go from large to small
+    lines.reverse()
+    for line in lines:
+        print(line)
 
 def test4():
     tc = unittest.TestCase()
@@ -169,7 +201,7 @@ def main():
     test1()
     test2()
     test3()
-    # test4()
+    test4()
 
 if __name__ == '__main__':
     main()
