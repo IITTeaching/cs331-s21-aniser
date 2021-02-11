@@ -1,6 +1,9 @@
 from unittest import TestCase
 import random
 import urllib.request
+# from stack overflow link posted in the discord chat
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
 
 ROMEO_SOLILOQUY = """
         But, soft! what light through yonder window breaks?
@@ -34,7 +37,19 @@ ROMEO_SOLILOQUY = """
 # Implement this function
 def compute_ngrams(toks, n=2):
     """Returns an n-gram dictionary based on the provided list of tokens."""
-    pass
+    # step 1: create a dictionary with all possible key values using a dictionary comprehension 
+    # (ex. if n = 3, ignores last two elements which can't create full 3-grams)
+    ngram_dict = {k:[] for k in toks[:-n+1]}
+
+    # step 2: loop through values that represent keys in toks
+    for i in range(len(toks)-n+1):
+        # checks if the selected value is indeed a key
+        if toks[i] in ngram_dict: 
+            # adds ngram value to the tuple of the key:value pair
+            ngram_dict[toks[i]].append(tuple(toks[i+1:i+n]))
+    
+    # step 3: return the dictionary of ngram combos
+    return ngram_dict
 
 def test1():
     test1_1()
@@ -93,7 +108,27 @@ def test1_2():
 ################################################################################
 # Implement this function
 def gen_passage(ngram_dict, length=100):
-    pass
+    # step 1: select a random key to serve as the first token
+    token = random.choice(sorted(ngram_dict.keys()))
+
+    # step 2: set that token as the first word of the passage
+    passage = [token]
+
+    # step 3: select random tuple from the list associated with the token
+    # and append the sequence to the passage separated by spaces
+    while len(passage) < length:
+        passage.append(''.join(random.choice(ngram_dict[token])))
+        # step 4: set last token of selected sequence as new token
+        token = passage[-1]
+        # step 5: if current token is a key in the dictionary, continue
+        # otherwise select another random key from the map as the current token
+        # add append it to the passage before continuing
+        if token not in ngram_dict:
+            token = random.choice(sorted(ngram_dict.keys()))
+            passage.append(token)
+    
+    # step 6: return passage with words sepatated by spaces
+    return " ".join(passage)
 
 # 50 Points
 def test2():
