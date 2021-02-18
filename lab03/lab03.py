@@ -17,7 +17,14 @@ def mysort(lst: List[T], compare: Callable[[T, T], int]) -> List[T]:
     right element, 1 if the left is larger than the right, and 0 if the two
     elements are equal.
     """
-    pass
+    for i in range(1, len(lst)): # goes through every element except the first
+        for j in range(i, 0, -1): # loops backward through elements
+            if compare(lst[j], lst[j-1]) == -1: # if left is smaller than right
+                lst[j], lst[j-1] = lst[j-1], lst[j] # swaps
+            else:
+                break
+    return lst
+            
 
 def mybinsearch(lst: List[T], elem: S, compare: Callable[[T, S], int]) -> int:
     """
