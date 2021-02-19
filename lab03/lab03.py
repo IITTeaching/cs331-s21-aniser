@@ -1,6 +1,9 @@
 import urllib.request
 import unittest
 from typing import TypeVar, Callable, List
+# from stack overflow link posted in the discord chat
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
 
 T = TypeVar('T')
 S = TypeVar('S')
@@ -129,16 +132,27 @@ class PrefixSearcher():
         Initializes a prefix searcher using a document and a maximum
         search string length k.
         """
-        pass
+        substrings = [document[i:i+k] for i in range(len(document)-k)]
+        strcmp = lambda x,y: 0 if x == y else (-1 if x < y else 1)
+        mysort(substrings, strcmp)
+        self.substrings = substrings
+
 
     def search(self, q):
         """
         Return true if the document contains search string q (of
-
         length up to n). If q is longer than n, then raise an
         Exception.
         """
-        pass
+        strcmp = lambda x, y: 0 if x == y else (-1 if x < y else 1)
+        # if q exactly exists in the list
+        if mybinsearch(self.substrings, q, strcmp) != -1:
+            return True
+        else: # checks if a q exists as a substring in one of the elements of substrings
+            for i in self.substrings:
+                if q in i:
+                    return True
+        return False
 
 # 30 Points
 def test2():
@@ -234,7 +248,7 @@ def test3_2():
 def main():
     test1()
     test2()
-    test3()
+    # test3()
 
 if __name__ == '__main__':
     main()
