@@ -43,9 +43,9 @@ def mybinsearch(lst: List[T], elem: S, compare: Callable[[T, S], int]) -> int:
         mid = (lo + hi) // 2
         if compare(lst[mid], elem) == 0:
             return mid
-        elif compare(lst[mid], elem) == -1: # elem is higher
+        elif compare(lst[mid], elem) == -1: # elem is higher than midpoint
             lo = mid + 1
-        else: # compare(lst[mid], elem) == 1 # elem is lower
+        else: # compare(lst[mid], elem) == 1 # elem is lower than midpoint
             hi = mid - 1
     return -1
 
@@ -132,10 +132,11 @@ class PrefixSearcher():
         Initializes a prefix searcher using a document and a maximum
         search string length k.
         """
-        substrings = [document[i:i+k] for i in range(len(document)-k)]
-        strcmp = lambda x,y: 0 if x == y else (-1 if x < y else 1)
-        mysort(substrings, strcmp)
-        self.substrings = substrings
+        # initialize document and k
+        self.doc = document
+        self.max = k
+        # creates a list of substrings of length k
+        self.substrings = [document[i:i+k] for i in range(len(document)-k)]
 
 
     def search(self, q):
@@ -144,15 +145,16 @@ class PrefixSearcher():
         length up to n). If q is longer than n, then raise an
         Exception.
         """
-        strcmp = lambda x, y: 0 if x == y else (-1 if x < y else 1)
-        # if q exactly exists in the list
-        if mybinsearch(self.substrings, q, strcmp) != -1:
-            return True
-        else: # checks if a q exists as a substring in one of the elements of substrings
-            for i in self.substrings:
-                if q in i:
-                    return True
-        return False
+        # checks if the query is longer than the document
+        # if so, raises exception
+        if len(q) > len(self.doc):
+            raise Exception("q is longer than n")
+        # create comparison function, which for each substring (up to length q), checks which is larger/smaller
+        strcmp = lambda x,y: 0 if (x[:len(q)] == y[:len(q)]) else (-1 if (x[:len(q)] < y[:len(q)]) else 1)
+        # sort list using that comaprison function
+        mysort(self.substrings, strcmp)
+        # uses binary sort to search for q and return True if it is in the document
+        return mybinsearch(self.substrings, q, strcmp) != -1
 
 # 30 Points
 def test2():
@@ -194,20 +196,44 @@ class SuffixArray():
         """
         Creates a suffix array for document (a string).
         """
-        pass
-
+        # initialize with a document
+        self.document = document
+        # construct a suffix array of all possible suffixes (from 0 to n-1)
+        self.suffixes = [document[i:] for i in range(len(document))]
+        # sort the array using mysort (with suffixcmp function to compaire integers)
+        suffixcmp = lambda x,y: 0 if x[-1] == y[-1] else (-1 if x[-1] < y[-1] else 1)
+        # use enumerate to get the "count" (the number) of each suffix, and order appropriately
+        # ex for "Hello World!": 
+        # Before: [(0, 'Hello World!'), (1, 'ello World!'), (2, 'llo World!'), (3, 'lo World!'), (4, 'o World!'), (5, ' World!'), (6, 'World!'), (7, 'orld!'), (8, 'rld!'), (9, 'ld!'), (10, 'd!'), (11, '!')]
+        # After: [(5, ' World!'), (11, '!'), (0, 'Hello World!'), (6, 'World!'), (10, 'd!'), (1, 'ello World!'), (9, 'ld!'), (2, 'llo World!'), (3, 'lo World!'), (4, 'o World!'), (7, 'orld!'), (8, 'rld!')] 
+        temp = mysort(list(enumerate(self.suffixes)), suffixcmp)
+        # unpack tuple and store the count in suffixArray
+        # ex. [5,11,0,6,10,1,9,2,3,4,7,8]
+        self.suffixArray = [x for x,_ in temp]
 
     def positions(self, searchstr: str):
         """
-        Returns all the positions of searchstr in the documented indexed by the suffix array.
+        Returns all the positions of searchstr in the document indexed by the suffix array.
         """
-        pass
-
+        # create a list to return all the positions
+        positions = []
+        # iterates through all possible substrings in the document
+        for i in range(len(self.document)-len(searchstr)):
+            # if the substring is equal to searchstr
+            if self.document[i:i+len(searchstr)] == searchstr:
+                # append the starting position of the substring to positions
+                positions.append(i)
+        # return all the positions of searchstr in the document
+        return positions
+        
+        
     def contains(self, searchstr: str):
         """
         Returns true of searchstr is coontained in document.
         """
-        pass
+        cmpfcn = lambda x,y: 0 if self.document[x:x+len(searchstr)] == y else (-1 if (self.document[x:x+len(searchstr)] < y) else 1)
+        # uses binarysearch with suffixArray to check if document contains searchstr
+        return mybinsearch(self.suffixArray, searchstr, cmpfcn) != -1
 
 # 40 Points
 def test3():
@@ -239,7 +265,8 @@ def test3_2():
     s = SuffixArray(md_text[0:1000])
     tc.assertTrue(s.contains("Moby Dick"))
     tc.assertTrue(s.contains("Herman Melville"))
-    tc.assertEqual(s.positions("Moby Dick"), [427])
+    # updated test case from discord chat
+    tc.assertEqual(s.positions("Moby Dick"), [34, 346])
 
 
 #################################################################################
@@ -248,7 +275,7 @@ def test3_2():
 def main():
     test1()
     test2()
-    # test3()
+    test3()
 
 if __name__ == '__main__':
     main()
