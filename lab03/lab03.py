@@ -43,9 +43,9 @@ def mybinsearch(lst: List[T], elem: S, compare: Callable[[T, S], int]) -> int:
         mid = (lo + hi) // 2
         if compare(lst[mid], elem) == 0:
             return mid
-        elif compare(lst[mid], elem) == -1: # elem is higher
+        elif compare(lst[mid], elem) == -1: # elem is higher than midpoint
             lo = mid + 1
-        else: # compare(lst[mid], elem) == 1 # elem is lower
+        else: # compare(lst[mid], elem) == 1 # elem is lower than midpoint
             hi = mid - 1
     return -1
 
@@ -132,10 +132,11 @@ class PrefixSearcher():
         Initializes a prefix searcher using a document and a maximum
         search string length k.
         """
-        substrings = [document[i:i+k] for i in range(len(document)-k)]
-        strcmp = lambda x,y: 0 if x == y else (-1 if x < y else 1)
-        mysort(substrings, strcmp)
-        self.substrings = substrings
+        # initialize document and k
+        self.doc = document
+        self.max = k
+        # creates a list of substrings of length k
+        self.substrings = [document[i:i+k] for i in range(len(document)-k)]
 
 
     def search(self, q):
@@ -144,15 +145,16 @@ class PrefixSearcher():
         length up to n). If q is longer than n, then raise an
         Exception.
         """
-        strcmp = lambda x, y: 0 if x == y else (-1 if x < y else 1)
-        # if q exactly exists in the list
-        if mybinsearch(self.substrings, q, strcmp) != -1:
-            return True
-        else: # checks if a q exists as a substring in one of the elements of substrings
-            for i in self.substrings:
-                if q in i:
-                    return True
-        return False
+        # checks if the query is longer than the document
+        # if so, raises exception
+        if len(q) > len(self.doc):
+            raise Exception("q is longer than n")
+        # create comparison function, which for each substring (up to length q), checks which is larger/smaller
+        strcmp = lambda x,y: 0 if (x[:len(q)] == y[:len(q)]) else (-1 if (x[:len(q)] < y[:len(q)]) else 1)
+        # sort list using that comaprison function
+        mysort(self.substrings, strcmp)
+        # uses binary sort to search for q and return True if it is in the document
+        return mybinsearch(self.substrings, q, strcmp) != -1
 
 # 30 Points
 def test2():
