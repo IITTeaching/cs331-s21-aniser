@@ -211,22 +211,29 @@ class SuffixArray():
         # ex. [5,11,0,6,10,1,9,2,3,4,7,8]
         self.suffixArray = [x for x,_ in temp]
 
-        print(list(enumerate(self.suffixes)))
-        print(temp)
-
     def positions(self, searchstr: str):
         """
-        Returns all the positions of searchstr in the documented indexed by the suffix array.
+        Returns all the positions of searchstr in the document indexed by the suffix array.
         """
-        pass
-
+        # create a list to return all the positions
+        positions = []
+        # iterates through all possible substrings in the document
+        for i in range(len(self.document)-len(searchstr)):
+            # if the substring is equal to searchstr
+            if self.document[i:i+len(searchstr)] == searchstr:
+                # append the starting position of the substring to positions
+                positions.append(i)
+        # return all the positions of searchstr in the document
+        return positions
+        
+        
     def contains(self, searchstr: str):
         """
         Returns true of searchstr is coontained in document.
         """
-        pass
-
-SuffixArray("Hello World!")
+        cmpfcn = lambda x,y: 0 if self.document[x:x+len(searchstr)] == y else (-1 if (self.document[x:x+len(searchstr)] < y) else 1)
+        # uses binarysearch with suffixArray to check if document contains searchstr
+        return mybinsearch(self.suffixArray, searchstr, cmpfcn) != -1
 
 # 40 Points
 def test3():
@@ -258,7 +265,8 @@ def test3_2():
     s = SuffixArray(md_text[0:1000])
     tc.assertTrue(s.contains("Moby Dick"))
     tc.assertTrue(s.contains("Herman Melville"))
-    tc.assertEqual(s.positions("Moby Dick"), [427])
+    # updated test case from discord chat
+    tc.assertEqual(s.positions("Moby Dick"), [34, 346])
 
 
 #################################################################################
@@ -267,7 +275,7 @@ def test3_2():
 def main():
     test1()
     test2()
-    # test3()
+    test3()
 
 if __name__ == '__main__':
     main()
