@@ -196,8 +196,23 @@ class SuffixArray():
         """
         Creates a suffix array for document (a string).
         """
-        pass
+        # initialize with a document
+        self.document = document
+        # construct a suffix array of all possible suffixes (from 0 to n-1)
+        self.suffixes = [document[i:] for i in range(len(document))]
+        # sort the array using mysort (with suffixcmp function to compaire integers)
+        suffixcmp = lambda x,y: 0 if x[-1] == y[-1] else (-1 if x[-1] < y[-1] else 1)
+        # use enumerate to get the "count" (the number) of each suffix, and order appropriately
+        # ex for "Hello World!": 
+        # Before: [(0, 'Hello World!'), (1, 'ello World!'), (2, 'llo World!'), (3, 'lo World!'), (4, 'o World!'), (5, ' World!'), (6, 'World!'), (7, 'orld!'), (8, 'rld!'), (9, 'ld!'), (10, 'd!'), (11, '!')]
+        # After: [(5, ' World!'), (11, '!'), (0, 'Hello World!'), (6, 'World!'), (10, 'd!'), (1, 'ello World!'), (9, 'ld!'), (2, 'llo World!'), (3, 'lo World!'), (4, 'o World!'), (7, 'orld!'), (8, 'rld!')] 
+        temp = mysort(list(enumerate(self.suffixes)), suffixcmp)
+        # unpack tuple and store the count in suffixArray
+        # ex. [5,11,0,6,10,1,9,2,3,4,7,8]
+        self.suffixArray = [x for x,_ in temp]
 
+        print(list(enumerate(self.suffixes)))
+        print(temp)
 
     def positions(self, searchstr: str):
         """
@@ -210,6 +225,8 @@ class SuffixArray():
         Returns true of searchstr is coontained in document.
         """
         pass
+
+SuffixArray("Hello World!")
 
 # 40 Points
 def test3():
