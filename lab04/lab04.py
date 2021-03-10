@@ -117,11 +117,13 @@ class ArrayList:
         and enclosed by square brackets. E.g., for a list containing values
         1, 2 and 3, returns '[1, 2, 3]'."""
         ### BEGIN SOLUTION
+        return "[" + ", ".join(str(i) for i in self.__iter__()) + "]"
         ### END SOLUTION
 
     def __repr__(self):
         """Supports REPL inspection. (Same behavior as `str`.)"""
         ### BEGIN SOLUTION
+        return "[" + ", ".join(str(i) for i in self.__iter__()) + "]"
         ### END SOLUTION
 
 
@@ -227,6 +229,8 @@ class ArrayList:
     def __iter__(self):
         """Supports iteration (via `iter(self)`)"""
         ### BEGIN SOLUTION
+        for i in range(len(self.data)):
+            yield self.data[i]
         ### END SOLUTION
 
 ################################################################################
@@ -489,11 +493,13 @@ def test_log(s):
 def main():
     test_case_1()
     test_case_2()
+    '''
     test_case_3()
     test_case_4()
     test_case_5()
     test_case_6()
     test_case_7()
+    '''
 
 if __name__ == '__main__':
     main()
