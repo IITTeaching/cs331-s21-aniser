@@ -132,6 +132,8 @@ class ArrayList:
     def append(self, value):
         """Appends value to the end of this list."""
         ### BEGIN SOLUTION
+        self.data.append(None) # add slot
+        self.data[len(self.data) - 1] = value # set value to end of list
         ### END SOLUTION
 
     def insert(self, idx, value):
@@ -139,18 +141,33 @@ class ArrayList:
         list, as needed. Note that inserting a value at len(self) --- equivalent
         to appending the value --- is permitted. Raises IndexError if idx is invalid."""
         ### BEGIN SOLUTION
+        nidx = self._normalize_idx(idx) # normalizes idx
+        if nidx > len(self.data):
+            raise IndexError # raises if idx is invalid
+        self.data + [None] # add extra slot to list
+        for i in reversed(range(nidx+1, len(self.data))): # loops backwards through list
+            self.data[i] = self.data[i+1] # shifts values one over
+        self.data[nidx] = value # sets value at idx
         ### END SOLUTION
 
     def pop(self, idx=-1):
         """Deletes and returns the element at idx (which is the last element,
         by default)."""
         ### BEGIN SOLUTION
+        popped = self.data[idx] # saves pooped value
+        del self.data[idx] # deletes value at idx
+        return popped # returns deleted value
         ### END SOLUTION
 
     def remove(self, value):
         """Removes the first (closest to the front) instance of value from the
         list. Raises a ValueError if value is not found in the list."""
         ### BEGIN SOLUTION
+        for i in range(len(self.data)): # loops through values
+            if self.data[i] == value: # finds first instance of value
+                del self.data[i] # removes that instance
+                return # break
+        raise ValueError # raises if nothing found
         ### END SOLUTION
 
 
@@ -160,11 +177,27 @@ class ArrayList:
         """Returns True if this ArrayList contains the same elements (in order) as
         other. If other is not an ArrayList, returns False."""
         ### BEGIN SOLUTION
+        # checks if other is an ArrayList
+        if type(other) != ArrayList:
+            return False
+        # checks that the list 
+        # check if other is same size as ArrayList
+        if self.len != other.len:
+            return False
+        # checks if each individual value matches
+        for i in range(self.len):
+            if self[i] != other[i]:
+                return False
+        return True
         ### END SOLUTION
 
     def __contains__(self, value):
         """Implements `val in self`. Returns true if value is found in this list."""
         ### BEGIN SOLUTION
+        for i in range(len(self.data)):
+            if self.data[i] == value:
+                return True
+        return False
         ### END SOLUTION
 
 
@@ -493,9 +526,9 @@ def test_log(s):
 def main():
     test_case_1()
     test_case_2()
-    '''
-    test_case_3()
+    # test_case_3()
     test_case_4()
+    '''
     test_case_5()
     test_case_6()
     test_case_7()
