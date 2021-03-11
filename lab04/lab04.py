@@ -194,7 +194,7 @@ class ArrayList:
     def __contains__(self, value):
         """Implements `val in self`. Returns true if value is found in this list."""
         ### BEGIN SOLUTION
-        for i in range(len(self.data)):
+        for i in range(self.len):
             if self.data[i] == value:
                 return True
         return False
@@ -206,16 +206,27 @@ class ArrayList:
     def __len__(self):
         """Implements `len(self)`"""
         ### BEGIN SOLUTION
+        return self.len
         ### END SOLUTION
 
     def min(self):
         """Returns the minimum value in this list."""
         ### BEGIN SOLUTION
+        min = self.data[0]
+        for i in range(self.len):
+            if self.data[i] < min:
+                min = self.data[i]
+        return min
         ### END SOLUTION
 
     def max(self):
         """Returns the maximum value in this list."""
         ### BEGIN SOLUTION
+        max = self.data[0]
+        for i in range(self.len):
+            if self.data[i] > max:
+                max = self.data[i]
+        return max
         ### END SOLUTION
 
     def index(self, value, i=0, j=None):
@@ -224,11 +235,24 @@ class ArrayList:
         specified, search through the end of the list for value. If value
         is not in the list, raise a ValueError."""
         ### BEGIN SOLUTION
+        if j == None:
+            j = self.len # search through end of list if j isn't specified
+        i = self._normalize_idx(i)
+        j = self._normalize_idx(j)
+        for e in range(i, j):
+            if self[e] == value:
+                return e
+        raise ValueError
         ### END SOLUTION
 
     def count(self, value):
         """Returns the number of times value appears in this list."""
         ### BEGIN SOLUTION
+        counter = 0
+        for i in range(self.len):
+            if self[i] == value:
+                counter += 1
+        return counter
         ### END SOLUTION
 
 
@@ -528,8 +552,8 @@ def main():
     test_case_2()
     # test_case_3()
     test_case_4()
-    '''
     test_case_5()
+    '''
     test_case_6()
     test_case_7()
     '''
