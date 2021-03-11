@@ -280,6 +280,13 @@ class ArrayList:
         instance that contains the values in this list followed by those
         of other."""
         ### BEGIN SOLUTION
+        other_arr = ArrayList()
+        for i in range(self.len):
+            other_arr.append(self.data[i]) # appends values from self
+        for i in range(len(other)):
+            other_arr.append(other[i]) # appends values from other
+        return other_arr
+        
         ### END SOLUTION
 
     def clear(self):
@@ -290,11 +297,19 @@ class ArrayList:
         """Returns a new ArrayList instance (with a separate data store), that
         contains the same values as this list."""
         ### BEGIN SOLUTION
+        new_data = ConstrainedList(self.len)
+        new_lst = ArrayList()
+        new_lst.data = new_data
+        for i in range(self.len):
+            lst.append(self.data[i])
+        return new_lst
         ### END SOLUTION
 
     def extend(self, other):
         """Adds all elements, in order, from other --- an Iterable --- to this list."""
         ### BEGIN SOLUTION
+        for i in range(len(other)):
+            self.append(other[i]) # uses append method already implemented
         ### END SOLUTION
 
 
@@ -570,7 +585,7 @@ def main():
     test_case_3()
     test_case_4()
     test_case_5()
-    # test_case_6()
+    test_case_6()
     test_case_7()
 
 if __name__ == '__main__':
