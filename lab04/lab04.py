@@ -132,8 +132,7 @@ class ArrayList:
     def append(self, value):
         """Appends value to the end of this list."""
         ### BEGIN SOLUTION
-        self.data.append(None) # add slot
-        self.data[len(self.data) - 1] = value # set value to end of list
+        self.insert(self.len, value)
         ### END SOLUTION
 
     def insert(self, idx, value):
@@ -141,13 +140,20 @@ class ArrayList:
         list, as needed. Note that inserting a value at len(self) --- equivalent
         to appending the value --- is permitted. Raises IndexError if idx is invalid."""
         ### BEGIN SOLUTION
-        nidx = self._normalize_idx(idx) # normalizes idx
-        if nidx > len(self.data):
-            raise IndexError # raises if idx is invalid
-        self.data + [None] # add extra slot to list
-        for i in reversed(range(nidx+1, len(self.data))): # loops backwards through list
-            self.data[i] = self.data[i+1] # shifts values one over
-        self.data[nidx] = value # sets value at idx
+        if idx > self.len:
+            raise IndexError
+        if self.len == 0:
+            lst = ConstrainedList(4)
+            self.data = lst
+        if self.len == len(self.data):
+            lst = ConstrainedList(len(self.data)*2)
+            for i in range(self.len):
+                lst[i] = self.data[i]
+            self.data = lst
+        for i in range (self.len-1, idx-1, -1):
+            self.data[i+1] = self.data[i]
+        self.len = self.len + 1
+        self.data[idx] = value
         ### END SOLUTION
 
     def pop(self, idx=-1):
@@ -155,19 +161,30 @@ class ArrayList:
         by default)."""
         ### BEGIN SOLUTION
         popped = self.data[idx] # saves pooped value
-        del self.data[idx] # deletes value at idx
-        return popped # returns deleted value
+        self.data[idx] = None # sets value at idx to None
+        for i in range(idx, self.len):
+            self.data[i] = self.data[i+1] # shift all values to left
+        self.len = self.len - 1 # reduce the length of the list to eliminate last element
+        return popped
         ### END SOLUTION
 
     def remove(self, value):
         """Removes the first (closest to the front) instance of value from the
         list. Raises a ValueError if value is not found in the list."""
         ### BEGIN SOLUTION
-        for i in range(len(self.data)): # loops through values
+        idx = -1 # set flag variable
+        for i in range(self.len): # loops through values
             if self.data[i] == value: # finds first instance of value
-                del self.data[i] # removes that instance
-                return # break
-        raise ValueError # raises if nothing found
+                idx = i # removes that instance
+                break # break
+        if idx != -1:
+            self.data[idx] = None
+            for i in range(idx, self.len):
+                self.data[i] = self.data[i+1] # shifts all values over
+            self.data[self.len] = None
+            self.len = self.len - 1 # reduces the length of the list
+        else:
+            raise ValueError # raises if nothing found
         ### END SOLUTION
 
 
@@ -195,7 +212,7 @@ class ArrayList:
         """Implements `val in self`. Returns true if value is found in this list."""
         ### BEGIN SOLUTION
         for i in range(self.len):
-            if self.data[i] == value:
+            if self[i] == value:
                 return True
         return False
         ### END SOLUTION
@@ -550,13 +567,11 @@ def test_log(s):
 def main():
     test_case_1()
     test_case_2()
-    # test_case_3()
+    test_case_3()
     test_case_4()
     test_case_5()
-    '''
-    test_case_6()
+    # test_case_6()
     test_case_7()
-    '''
 
 if __name__ == '__main__':
     main()
