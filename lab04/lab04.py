@@ -175,7 +175,7 @@ class ArrayList:
         idx = -1 # set flag variable
         for i in range(self.len): # loops through values
             if self.data[i] == value: # finds first instance of value
-                idx = i # removes that instance
+                idx = i
                 break # break
         if idx != -1:
             self.data[idx] = None
